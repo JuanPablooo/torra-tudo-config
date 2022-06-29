@@ -1,0 +1,29 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:8099
+  application:
+    name: gateway
+  main:
+    web-application-type: REACTIVE
+  cloud:
+    config:
+      uri: http://localhost:8099
+
+    gateway:
+      discovery:
+        locator:enabled: true
+      locator:
+        lower-case-service-id: true
+      routes:
+        - id: productModule
+          uri: lb://product
+          predicates:
+            - Method=GET,POST
+            - Path=/product/**
+          filters:
+            - CustomFilter
+        - id: clientModule
+          uri: lb://client
+          predicates:
+            - Method=GET,POST
+            - Path=/client/**
